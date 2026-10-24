@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Multiview — Be Omnipresent",
   "short_name": "Multiview",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Watch 4, 9 or 16 YouTube live streams and other feeds at once in a 16:9 video wall, with labels and an observation log.",
   "homepage_url": "https://github.com/Vindicator655/Multiview-Be-Omnipresent",
   "minimum_chrome_version": "110",

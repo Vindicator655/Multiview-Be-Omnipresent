@@ -652,7 +652,8 @@
     notice.append(noticeText, btn('Open in tab', 'Open in a YouTube tab', () => openInTab(r.i), 'ib'));
     r.ui.notice = notice; r.ui.noticeText = noticeText;
 
-    r.el.append(frame, r.ui.badge, top, bottom, notice);
+    frame.append(r.ui.badge);   // on the 16:9 video itself, not in the letterbox bars
+    r.el.append(frame, top, bottom, notice);
 
     /* drop target for swapping */
     r.el.addEventListener('dragover', e => { e.preventDefault(); r.el.classList.add('dragover'); });
@@ -716,7 +717,8 @@
       btn('⟳', 'Reload this tile', () => { slot.nonce = (slot.nonce || 0) + 1; render(); }),
       btn('⛶', 'Fullscreen this tile', () => toggleTileFullscreen(r.el)),
       btn('✕', 'Remove', () => removeSlot(r.i), 'ib rm'));
-    r.el.append(frame, r.ui.badge, top);
+    frame.append(r.ui.badge);
+    r.el.append(frame, top);
 
     r.el.addEventListener('dragover', e => { e.preventDefault(); r.el.classList.add('dragover'); });
     r.el.addEventListener('dragleave', () => r.el.classList.remove('dragover'));
