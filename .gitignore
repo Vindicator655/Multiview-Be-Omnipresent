@@ -1,0 +1,13 @@
+# packaged builds
+*.zip
+*.crx
+*.pem
+dist/
+
+# tooling / OS noise
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

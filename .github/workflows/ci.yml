@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Syntax-check scripts
+        run: for f in extension/*.js scripts/*.js; do node --check "$f"; done
+      - name: Validate manifest and icon files
+        run: |
+          node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('extension/manifest.json', 'utf8'));
+            const files = [...Object.values(m.icons), ...Object.values(m.action.default_icon),
+              ...m.content_scripts.flatMap(c => c.js), m.background.service_worker];
+            for (const f of files) fs.accessSync('extension/' + f);
+            console.log(m.name, m.version, '-', files.length, 'referenced files present');
+          "
+
+  release:
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag must match manifest version
+        run: test "v$(node -p "require('./extension/manifest.json').version")" = "$GITHUB_REF_NAME"
+      - name: Package
+        run: cd extension && zip -r "../multiview-$GITHUB_REF_NAME.zip" . -x '*.DS_Store'
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "multiview-$GITHUB_REF_NAME.zip" --title "Multiview $GITHUB_REF_NAME" --generate-notes
